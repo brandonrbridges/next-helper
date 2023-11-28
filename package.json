@@ -2,7 +2,7 @@
 	"name": "nextjs-essentials",
 	"displayName": "Next.js Essentials",
 	"description": "Next.js Commands and Helpers for VS Code",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.84.0"
 	},
@@ -16,6 +16,7 @@
 			}
 		]
 	},
+	"icon": "dist/resources/logo.png",
 	"publisher": "BrandonBridges",
 	"repository": {
 		"type": "git",
@@ -49,5 +50,8 @@
 		"webpack": "^5.89.0",
 		"webpack-cli": "^5.1.4",
 		"@vscode/test-electron": "^2.3.6"
+	},
+	"dependencies": {
+		"copy-webpack-plugin": "^11.0.0"
 	}
 }

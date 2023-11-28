@@ -1,3 +1,5 @@
+![Next.js Essentials Logo](./src/resources/logo.png)
+
 # Next.js Essentials
 
 ## Commands

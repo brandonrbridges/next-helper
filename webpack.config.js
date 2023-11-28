@@ -4,6 +4,8 @@
 
 const path = require('path')
 
+const CopyPlugin = require('copy-webpack-plugin')
+
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
 
@@ -41,5 +43,16 @@ const extensionConfig = {
 	infrastructureLogging: {
 		level: 'log',
 	},
+
+	plugins: [
+		new CopyPlugin({
+			patterns: [
+				{
+					from: 'src/resources',
+					to: 'resources',
+				},
+			],
+		}),
+	],
 }
 module.exports = [extensionConfig]
