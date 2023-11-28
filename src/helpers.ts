@@ -35,15 +35,14 @@ export const findComponentDirectory = async (
 }
 
 export const generateComponentContent = (name: string): string => {
-	return `
-import React from 'react'
+	return `import React from 'react'
 
 const ${name} = () => {
   return <div>${name}</div>
 }
 
 export default ${name}
-  `
+`
 }
 
 export const generateIndexContent = (name: string): string => {
