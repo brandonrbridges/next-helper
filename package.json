@@ -2,7 +2,7 @@
 	"name": "nextjs-essentials",
 	"displayName": "Next.js Essentials",
 	"description": "Next.js Commands and Helpers for VS Code",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"engines": {
 		"vscode": "^1.84.0"
 	},
@@ -13,8 +13,23 @@
 			{
 				"command": "nextjs-essentials.createComponent",
 				"title": "Next.js Essentials: Create Component"
+			},
+			{
+				"command": "nextjs-essentials.createPage",
+				"title": "Next.js Essentials: Create Page"
 			}
-		]
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Next.js Essentials",
+			"properties": {
+				"nextjs-essentials.createStyleFiles": {
+					"type": "boolean",
+					"default": true,
+					"description": "Create a style file for the component (e.g. component.module.css/scss)"
+				}
+			}
+		}
 	},
 	"icon": "dist/resources/logo.png",
 	"publisher": "BrandonBridges",

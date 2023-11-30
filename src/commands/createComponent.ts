@@ -5,16 +5,23 @@ import * as vscode from 'vscode'
 import fs from 'fs'
 import path from 'path'
 
-// Helpers
+// Utils
 import {
-	findComponentDirectory,
-	generateComponentContent,
-	generateIndexContent,
-} from '../helpers'
+	detectLanguage,
+	detectStyleType,
+	findDirectory,
+} from '../utils/fs.utils'
+
+// Helpers
+import { generateComponentContent, generateIndexContent } from '../helpers'
 
 export const createComponentCommand = vscode.commands.registerCommand(
 	'nextjs-essentials.createComponent',
 	async () => {
+		// Configurations
+		const config = vscode.workspace.getConfiguration('nextjs-essentials')
+		const createStyleFiles = config.get('createStyleFiles')
+
 		const name = await vscode.window.showInputBox({
 			placeHolder: 'Component name',
 			prompt: 'Enter component name',
@@ -38,23 +45,46 @@ export const createComponentCommand = vscode.commands.registerCommand(
 		}
 
 		const root = folders[0].uri.fsPath
-		const directory = await findComponentDirectory(root)
+		const directory = await findDirectory(root, 'components')
 
 		if (!directory) {
 			vscode.window.showErrorMessage('No components directory found.')
 			return
 		}
 
-		const componentFile = generateComponentContent(name)
-		const componentFilePath = path.join(directory, `/${name}/${name}.tsx`)
-
-		const indexFile = generateIndexContent(name)
-		const indexFilePath = path.join(directory, `/${name}/index.ts`)
-
 		fs.mkdirSync(path.join(directory, `/${name}`))
 
+		const language = await detectLanguage()
+		const extension = language === 'typescript' ? 'tsx' : 'jsx'
+
+		const componentFileName = `${name}.${extension}`
+
+		const componentFile = await generateComponentContent(name)
+		const componentFilePath = path.join(
+			directory,
+			`/${name}/${componentFileName}`
+		)
+
 		fs.writeFileSync(componentFilePath, componentFile)
+
+		const indexFileName = extension === 'tsx' ? 'index.ts' : 'index.js'
+
+		const indexFile = generateIndexContent(name)
+		const indexFilePath = path.join(directory, `/${name}/${indexFileName}`)
+
 		fs.writeFileSync(indexFilePath, indexFile)
+
+		if (createStyleFiles) {
+			const styleType = await detectStyleType()
+
+			const styleFile = `._component {}`
+			const styleFilePath = path.join(
+				directory,
+				`/${name}/${name}.module.${styleType}`
+			)
+
+			fs.writeFileSync(styleFilePath, styleFile)
+		}
 
 		const openPath = vscode.Uri.file(componentFilePath)
 

@@ -1,44 +1,25 @@
-import fs from 'fs'
-import path from 'path'
+// VS Code
+import * as vscode from 'vscode'
 
-export const findComponentDirectory = async (
-	root: string
-): Promise<string | null> => {
-	try {
-		const entries = fs.readdirSync(root, { withFileTypes: true })
+// Utils
+import { detectStyleType } from './utils/fs.utils'
 
-		for (const entry of entries) {
-			if (entry.isDirectory()) {
-				if (entry.name === 'node_modules') {
-					continue
-				}
+export const generateComponentContent = async (
+	name: string
+): Promise<string> => {
+	const config = vscode.workspace.getConfiguration('nextjs-essentials')
+	const createStyleFiles = config.get('createStyleFiles')
 
-				if (entry.name === 'components') {
-					return path.join(root, entry.name)
-				} else {
-					const subDirectoryPath = path.join(root, entry.name)
-					const found = await findComponentDirectory(subDirectoryPath)
+	const extension = await detectStyleType()
 
-					if (found) {
-						return found
-					}
-				}
-			}
-		}
-
-		return null
-	} catch (error) {
-		console.error(`Error finding component directory: ${error}`)
-
-		return null
-	}
-}
-
-export const generateComponentContent = (name: string): string => {
 	return `import React from 'react'
 
+${createStyleFiles && `import styles from './${name}.module.${extension}'`}
+
 const ${name} = () => {
-  return <div>${name}</div>
+  return <div className={${
+		createStyleFiles && `styles._component`
+	}}>${name}</div>
 }
 
 export default ${name}
@@ -47,4 +28,19 @@ export default ${name}
 
 export const generateIndexContent = (name: string): string => {
 	return `export { default } from './${name}'`
+}
+
+export const generatePageContent = (name: string): string => {
+	const functionName = name.at(0)?.toUpperCase() + name.slice(1)
+
+	return `import React from 'react'
+	
+export default function ${functionName}() {
+	return (
+		<div>
+			${name}
+		</div>
+	)
+}
+`
 }
